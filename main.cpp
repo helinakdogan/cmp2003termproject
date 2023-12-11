@@ -30,8 +30,8 @@ int main() {
             filename = filename.substr(pos + 1);
         }
 
-        // Insert the filename into the hash table
-        myHashTable.insert(1, filename); // You need to replace 1 with the actual key (maybe a hash of filename)
+        // Insert the filename into the hash table using filename as the key
+        myHashTable.insert(std::hash<std::string>{}(filename), filename);
     }
 
     // Print the top pages
