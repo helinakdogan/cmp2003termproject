@@ -1,79 +1,41 @@
-//
-//  main.cpp
-//  text
-//
-//  Created by Selin Coskun on 8.12.2023.
-//
-
 #include <iostream>
 #include <fstream>
-using namespace std;
-
-
-class HashTable {
-private:
-    struct Node {
-            std::string key;
-            int value;
-            Node* next;
-        };
-    
-public:
-    void insert(string key, int value){
-        cout<<key<<' '<<value<<endl;
-        
-    }
-};
-
-
+#include <sstream>
+#include "hashtable.h"
 
 int main() {
-    HashTable hashTable;
-    ifstream infile;
-    string line;
-    infile.open("access_log");
-    
-    
-    
-    
-    
-    for(int i=0; i<100;i++){
-        
-        getline(infile,line);
-        const int maxWords = 20; // Maximum number of words in the array
-            std::string words[maxWords]; // Array to store the words
-            int wordCount = 0;
+    // Create an instance of your hash table
+    hashT myHashTable;
 
-            size_t pos = 0;
-            while ((pos = line.find(' ')) != std::string::npos) {
-                words[wordCount++] = line.substr(0, pos);
-                line.erase(0, pos + 1);
-            }
-            
-            // Store the last word (or the only word if there are no spaces left)
-            words[wordCount++] = line;
-        string filename=words[6];
-        int statusCode=stoi(words[8]);
-        int reply;
-        if(words[9]=="-"){
-           reply=0;}
-        else{
-            reply=stoi(words[9]);};
-        if(statusCode==200){
-            hashTable.insert(filename,reply);
+    // Open the log file
+    std::ifstream logFile("access_log");
+
+    if (!logFile.is_open()) {
+        std::cerr << "Error: Unable to open the log file." << std::endl;
+        return 1;
+    }
+
+    // Read each line from the log file and process it
+    std::string line;
+    while (std::getline(logFile, line)) {
+        // Assuming each line in the log file has the format: "GET filename HTTP/1.0"
+        std::istringstream iss(line);
+        std::string requestType, filename, httpVersion;
+
+        iss >> requestType >> filename >> httpVersion;
+
+        // Extract filename from the request
+        size_t pos = filename.find_last_of("/");
+        if (pos != std::string::npos) {
+            filename = filename.substr(pos + 1);
         }
 
-            // Display the elements in the array
-            
-        //cout<<filename<<' '<<statusCode<<' '<<reply<<endl;
-        
-       
-        
+        // Insert the filename into the hash table
+        myHashTable.insert(1, filename); // You need to replace 1 with the actual key (maybe a hash of filename)
     }
+
+    // Print the top pages
+    myHashTable.printTopPages();
+
     return 0;
 }
-
-
-
-
-
