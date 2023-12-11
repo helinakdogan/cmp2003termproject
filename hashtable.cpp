@@ -12,7 +12,17 @@ HashTable::~HashTable() {
 
 void HashTable::insert(const std::string &filename, int visits) {
     int index = hashFunction(filename);
-    table[index].push_back({filename, visits});
+
+    // Check if the filename is already in the vector
+    auto it = std::find_if(table[index].begin(), table[index].end(),
+                           [&](const KeyValue &item) { return item.key == filename; });
+
+    // If found, update the visits count; otherwise, add a new item
+    if (it != table[index].end()) {
+        it->numOfItems += visits;
+    } else {
+        table[index].push_back({filename, visits});
+    }
 }
 
 void HashTable::printTopPages() const {
