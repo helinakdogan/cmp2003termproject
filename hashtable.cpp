@@ -1,16 +1,21 @@
 #include "HashTableH.h"
+#include <algorithm>
+#include <fstream>
+#include <sstream>
 
-// hashT sınıfının üye fonksiyonlarını tanımla
-hashT::hashT(int size) : tableSize(size), table(size) {}
+// HashTable class implementation
+HashTable::HashTable(int size) : tableSize(size), table(size) {}
 
-hashT::~hashT() {}
-
-void hashT::insert(int num, const std::string &str) {
-    int index = hashFunction(str) % tableSize;
-    table[index].push_back({str, num});
+HashTable::~HashTable() {
+    // Destructor implementation
 }
 
-void hashT::printTopPages() const {
+void HashTable::insert(const std::string &filename, int visits) {
+    int index = hashFunction(filename);
+    table[index].push_back({filename, visits});
+}
+
+void HashTable::printTopPages() const {
     std::vector<KeyValue> allPages;
 
     for (const auto &list : table) {
@@ -25,41 +30,23 @@ void hashT::printTopPages() const {
 
     std::sort(allPages.begin(), allPages.end(), compare);
 
-    std::cout << "Top 10 Pages using Hashtable:\n";
+    std::cout << "Top 10 Pages using HashTable:\n";
     for (size_t i = 0; i < std::min(allPages.size(), static_cast<size_t>(10)); ++i) {
         std::cout << "Filename: " << allPages[i].key << ", Visits: " << allPages[i].numOfItems << '\n';
     }
 }
 
-size_t hashT::hashFunction(const std::string &str) const {
-    // Basit bir örnek hash fonksiyonu; gerçek bir uygulama için daha karmaşık bir şey kullanmalısınız
-    size_t hash = 0;
-    for (char ch : str) {
-        hash = hash * 31 + ch;
-    }
-    return hash;
+size_t HashTable::hashFunction(const std::string &str) const {
+    return std::hash<std::string>{}(str) % tableSize;
 }
 
-// unorderedMapT sınıfının üye fonksiyonlarını tanımla
-void unorderedMapT::insert(int num, const std::string &str) {
-    data[str] += num;
-}
-
-void unorderedMapT::printTopPages() const {
-    std::vector<KeyValue> allPages;
-
-    for (const auto &item : data) {
-        allPages.push_back({item.first, item.second});
-    }
-
-    auto compare = [](const KeyValue &a, const KeyValue &b) {
-        return a.numOfItems > b.numOfItems;
-    };
-
-    std::sort(allPages.begin(), allPages.end(), compare);
-
-    std::cout << "Top 10 Pages using Unordered Map:\n";
-    for (size_t i = 0; i < std::min(allPages.size(), static_cast<size_t>(10)); ++i) {
-        std::cout << "Filename: " << allPages[i].key << ", Visits: " << allPages[i].numOfItems << '\n';
+void processLogFileWithHashTable(const std::string &filename, HashTable &hashTable) {
+    std::ifstream logFile(filename);
+    std::string line;
+    while (std::getline(logFile, line)) {
+        std::istringstream iss(line);
+        std::string requestType, filename, httpVersion;
+        iss >> requestType >> filename >> httpVersion;
+        hashTable.insert(filename, 1); // Assuming each line represents one visit
     }
 }
