@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <chrono>
-#include "HashTable.h" // İlk hash tablosu implementasyonu (hashT)
+#include "HashTableH.h" // İlk hash tablosu implementasyonu (hashT)
 #include <unordered_map> // İkinci hash tablosu implementasyonu (std::unordered_map)
 
 // Fonksiyon prototipleri
@@ -25,7 +25,7 @@ int main() {
 // hashT performansını ölçen fonksiyon
 void measurePerformanceHashT(const std::string& filename) {
     // hashT nesnesi oluştur
-    hashT myHashTable;
+    hashT myHashTable(100);
 
     // Zaman ölçümü başlat
     auto start = std::chrono::high_resolution_clock::now();

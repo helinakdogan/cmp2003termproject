@@ -1,41 +1,51 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "hashtable.h"
+#include "HashTableH.h"
 
 int main() {
-    // Create an instance of your hash table
-    hashT myHashTable;
+    hashT hashTable(100); // You can adjust the size as needed
+    unorderedMapT unorderedMap;
 
-    // Open the log file
-    std::ifstream logFile("access_log");
+    std::ifstream file("access_log.txt");
 
-    if (!logFile.is_open()) {
-        std::cerr << "Error: Unable to open the log file." << std::endl;
+    if (!file.is_open()) {
+        std::cerr << "Error opening file\n";
         return 1;
     }
 
-    // Read each line from the log file and process it
     std::string line;
-    while (std::getline(logFile, line)) {
-        // Assuming each line in the log file has the format: "GET filename HTTP/1.0"
+    while (std::getline(file, line)) {
         std::istringstream iss(line);
-        std::string requestType, filename, httpVersion;
+        std::string requestType, filename;
 
-        iss >> requestType >> filename >> httpVersion;
-
-        // Extract filename from the request
-        size_t pos = filename.find_last_of("/");
-        if (pos != std::string::npos) {
-            filename = filename.substr(pos + 1);
+        // Parse the log entry to extract the filename
+        for (int i = 0; i < 5; ++i) {
+            iss >> requestType;
         }
+        iss >> filename;
 
-        // Insert the filename into the hash table using filename as the key
-        myHashTable.insert(std::hash<std::string>{}(filename), filename);
+        // Assuming filename is in the format "GET filename HTTP/1.0"
+        if (filename.size() >= 4 && filename.substr(0, 4) == "GET") {
+            filename = filename.substr(4);
+            // Remove leading '/' if present
+            filename = (filename[0] == '/') ? filename.substr(1) : filename;
+
+            // Assuming filename is terminated by a space
+            size_t pos = filename.find(' ');
+            if (pos != std::string::npos) {
+                filename = filename.substr(0, pos);
+            }
+
+            hashTable.insert(1, filename);
+            unorderedMap.insert(1, filename);
+        }
     }
 
-    // Print the top pages
-    myHashTable.printTopPages();
+    file.close();
+
+    hashTable.printTopPages();
+    unorderedMap.printTopPages();
 
     return 0;
 }
