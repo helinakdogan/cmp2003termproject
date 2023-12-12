@@ -8,12 +8,14 @@
 #include <unordered_map>
 #include <algorithm>
 
-struct KeyValue {
+struct KeyValue
+{
     std::string key;
     int numOfItems;
 };
 
-class HashTable {
+class HashTable
+{
 public:
     HashTable(int size);
     ~HashTable();

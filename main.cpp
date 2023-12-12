@@ -5,10 +5,12 @@
 #include "HashTableH.h"
 #include "HashTable.cpp"
 
-void processLogFileWithUnorderedMap(const std::string &filename, std::unordered_map<std::string, int> &unorderedMap) {
+void processLogFileWithUnorderedMap(const std::string &filename, std::unordered_map<std::string, int> &unorderedMap)
+{
     std::ifstream logFile(filename);
     std::string line;
-    while (std::getline(logFile, line)) {
+    while (std::getline(logFile, line))
+    {
         std::istringstream iss(line);
         std::string requestType, filename, httpVersion;
 
@@ -23,27 +25,31 @@ void processLogFileWithUnorderedMap(const std::string &filename, std::unordered_
     }
 }
 
-
-void printTopPagesWithUnorderedMap(const std::unordered_map<std::string, int> &unorderedMap) {
+void printTopPagesWithUnorderedMap(const std::unordered_map<std::string, int> &unorderedMap)
+{
     std::vector<KeyValue> allPages;
 
-    for (const auto &item : unorderedMap) {
+    for (const auto &item : unorderedMap)
+    {
         allPages.push_back({item.first, item.second});
     }
 
-    auto compare = [](const KeyValue &a, const KeyValue &b) {
+    auto compare = [](const KeyValue &a, const KeyValue &b)
+    {
         return a.numOfItems > b.numOfItems;
     };
 
     std::sort(allPages.begin(), allPages.end(), compare);
 
     std::cout << "Top 10 Pages using std::unordered_map:\n";
-    for (size_t i = 0; i < std::min(allPages.size(), static_cast<size_t>(10)); ++i) {
+    for (size_t i = 0; i < std::min(allPages.size(), static_cast<size_t>(10)); ++i)
+    {
         std::cout << "Filename: " << allPages[i].key << ", Visits: " << allPages[i].numOfItems << '\n';
     }
 }
 
-int main() {
+int main()
+{
     std::string filename = "access_log.txt"; // Access log dosyanızın adını buraya ekleyin
 
     // Task 1: Using Custom HashTable
@@ -61,7 +67,7 @@ int main() {
 
     // Task 2: Using std::unordered_map
     std::unordered_map<std::string, int> unorderedMap;
-    
+
     auto startUnorderedMap = std::chrono::high_resolution_clock::now();
     processLogFileWithUnorderedMap(filename, unorderedMap);
     printTopPagesWithUnorderedMap(unorderedMap);
