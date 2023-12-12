@@ -14,11 +14,9 @@ void processLogFileWithUnorderedMap(const std::string &filename, std::unordered_
         std::istringstream iss(line);
         std::string requestType, filename, httpVersion;
 
-        // Log girişlerinin gereksiz kısımlarını atlayın
         iss.ignore(256, '"');
-        iss >> requestType; // İstek tipini atla
+        iss >> requestType;
 
-        // Geri kalan kısmı birleştirerek dosya adını elde et
         getline(iss >> std::ws, filename, '"');
 
         unorderedMap[filename] += 1;
@@ -50,10 +48,10 @@ void printTopPagesWithUnorderedMap(const std::unordered_map<std::string, int> &u
 
 int main()
 {
-    std::string filename = "access_log.txt"; // Access log dosyanızın adını buraya ekleyin
+    std::string filename = "access_log.txt";
 
     // Task 1: Using Custom HashTable
-    HashTable myHashTable(100); // HashTable size, adjust as needed
+    HashTable myHashTable(100);
 
     auto startHashTable = std::chrono::high_resolution_clock::now();
     processLogFileWithHashTable(filename, myHashTable);
