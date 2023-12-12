@@ -1,4 +1,3 @@
-// HashTableH.h
 #ifndef HASHTABLEH_H
 #define HASHTABLEH_H
 
