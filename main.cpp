@@ -57,6 +57,8 @@ int main() {
 
     std::cout << "Total Elapsed Time (HashTable): " << durationHashTable.count() << " microseconds\n";
 
+    std::cout << '\n';
+
     // Task 2: Using std::unordered_map
     std::unordered_map<std::string, int> unorderedMap;
     

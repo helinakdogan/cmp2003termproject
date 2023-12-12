@@ -11,13 +11,11 @@ HashTable::~HashTable() {
 }
 
 void HashTable::insert(const std::string &filename, int visits) {
-    int index = hashFunction(filename);
+    size_t index = hashFunction(filename);
 
-    // Check if the filename is already in the vector
     auto it = std::find_if(table[index].begin(), table[index].end(),
                            [&](const KeyValue &item) { return item.key == filename; });
 
-    // If found, update the visits count; otherwise, add a new item
     if (it != table[index].end()) {
         it->numOfItems += visits;
     } else {
@@ -38,7 +36,7 @@ void HashTable::printTopPages() const {
         return a.numOfItems > b.numOfItems;
     };
 
-    std::sort(allPages.begin(), allPages.end(), compare);
+    std::partial_sort(allPages.begin(), allPages.begin() + 10, allPages.end(), compare);
 
     std::cout << "Top 10 Pages using HashTable:\n";
     for (size_t i = 0; i < std::min(allPages.size(), static_cast<size_t>(10)); ++i) {
@@ -56,7 +54,12 @@ void processLogFileWithHashTable(const std::string &filename, HashTable &hashTab
     while (std::getline(logFile, line)) {
         std::istringstream iss(line);
         std::string requestType, filename, httpVersion;
-        iss >> requestType >> filename >> httpVersion;
-        hashTable.insert(filename, 1); // Assuming each line represents one visit
+
+        iss.ignore(256, '"');
+        iss >> requestType;
+
+        getline(iss >> std::ws, filename, '"');
+
+        hashTable.insert(filename, 1);
     }
 }
