@@ -3,6 +3,16 @@
 #include <fstream>
 #include <sstream>
 
+size_t customHashFunction(const std::string &str, size_t tableSize)
+{
+    size_t hash = 0;
+    for (char ch : str)
+    {
+        hash = 31 * hash + ch; // 31 is often chosen for its prime nature
+    }
+    return hash % tableSize;
+}
+
 // HashTable class implementation
 HashTable::HashTable(int size) : tableSize(size), table(size) {}
 
@@ -13,7 +23,7 @@ HashTable::~HashTable()
 
 void HashTable::insert(const std::string &filename, int visits)
 {
-    size_t index = hashFunction(filename);
+    size_t index = customHashFunction(filename, tableSize);
 
     auto it = std::find_if(table[index].begin(), table[index].end(),
                            [&](const KeyValue &item)
@@ -57,7 +67,7 @@ void HashTable::printTopPages() const
 
 size_t HashTable::hashFunction(const std::string &str) const
 {
-    return std::hash<std::string>{}(str) % tableSize;
+    return customHashFunction(str, tableSize);
 }
 
 void processLogFileWithHashTable(const std::string &filename, HashTable &hashTable)
